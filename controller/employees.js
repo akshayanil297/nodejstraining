@@ -1,5 +1,8 @@
 const Employee = require('../models/employees');
 const EmpDept = require('../models/employeeDepartment');
+const EmpRole = require('../models/employeeRole');
+const Address = require('../models/address')
+
 const bcrypt = require('bcrypt');
 const loginConstants =  require('../constants/login.constants');
 
@@ -137,3 +140,88 @@ exports.deleteEmployee = (req, resp, next) => {
             });
         });
 };
+
+exports.getEmployeeRoles = (req, resp, next) => {
+    const empId = req.params.id;
+    EmpRole.findAll({
+        attributes: ['roleId'],
+        where: { empId: empId }
+    })
+        .then(employeeRoles => {
+            resp.status(200).json({
+                employeeRoles
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            resp.status(404).json({
+                message: 'Employee Roles not found'
+            })
+        });
+};
+
+exports.postEmployeeRole = (req, resp, next) => {
+    const empId = req.params.id;
+    const roleId = req.body.roleId;
+ 
+    EmpRole.create({
+        empId: empId,
+        roleId: roleId
+    }).then(employeeDepartment => {
+        resp.status(200).json({
+            message: `Role ${employeeDepartment.roleId} added for employee ${employeeDepartment.empId}`
+        });
+    }).catch(err => {
+        console.log(err);
+        resp.status(404).json({
+            message: 'Adding role for employee failed'
+        });
+    });
+};
+
+
+exports.postAddress = (req, resp, next) => {
+    const empId = req.params.id;
+    const housename = req.body.housename;
+    const city = req.body.city;
+    const state = req.body.state;
+    const pincode = req.body.pincode;
+    const street = req.body.street;
+    Address.create({
+        empId: empId,
+        housename: housename,
+        city: city,
+        state: state,
+        pincode: pincode,
+        street: street
+    }).then(employeeAddress => {
+        resp.status(200).json({
+            message: `Address added for employee ${employeeAddress.empId}`
+        });
+    }).catch(err => {
+        console.log(err);
+        resp.status(404).json({
+            message: 'Adding address for employee failed'
+        });
+    });
+};
+
+exports.getAddress = (req, resp, next) => {
+    const empId = req.params.id;
+    Address.findAll({
+        attributes: ['housename','city','state','pincode'],
+        where: { empId: empId }
+    })
+        .then(employeeAddress => {
+            resp.status(200).json({
+                employeeAddress
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            resp.status(404).json({
+                message: 'Employee Address not found'
+            })
+        });
+};
+

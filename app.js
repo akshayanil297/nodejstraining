@@ -8,11 +8,14 @@ const { notFound, convertError } = require('./middleware/errorMiddleware')
 const Employee = require('./models/employees');
 const Department = require('./models/departments');
 const EmpDept = require('./models/employeeDepartment');
+const Role = require('./models/roles');
+const EmpRole = require('./models/employeeRole');
+const Address = require('./models/address');
 
 const empRoutes = require('./routes/employees');
 const depRoutes = require('./routes/departments');
 const loginRoute = require('./routes/login');
-
+const roleRoute = require('./routes/roles');
 
 /**
 * Express instance
@@ -28,6 +31,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use('/employees', empRoutes);
 app.use('/departments', depRoutes);
 app.use('/login', loginRoute);
+app.use('/roles', roleRoute);
+
+
 
 // Error Middlewares
 app.use(notFound);
@@ -48,6 +54,24 @@ EmpDept.belongsTo(Department, {
     },
     onDelete: 'CASCADE'
 });
+
+
+EmpRole.belongsTo(Employee, {
+    foreignKey: {
+        name: 'empId'
+    },
+    onDelete: 'CASCADE'
+});
+
+// Department.hasMany(EmpDept);
+EmpDept.belongsTo(Role, {
+    foreignKey: {
+        name: 'roleId'
+    },
+    onDelete: 'CASCADE'
+});
+
+
 
 
 sequelize
